@@ -33,7 +33,7 @@ sap.ui.define([
                 this.getView().byId("idInput").setVisible(true)
                 this.getView().byId("go").setVisible(true)
             },
-            //For setting input and go button hide. 
+            ////For setting input and go button hide.
             setInVissible: function () {
                 this.getView().byId("idInput").setVisible(false)
                 this.getView().byId("go").setVisible(false)
