@@ -1,0 +1,19 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" controllerName="project23.controller.View1">
+  
+  <Dialog id="_IDGenDialog1" title="EDIT STUDENT DETAILS" contentWidth="30%">
+
+  <Label id="_IDGenLabel2" text="ID" width="10%"></Label>
+  <Text id="sId" width="90%" text="{oModel>/update/StudentId}"></Text>
+
+  <Label id="_IDGenLabel1" text="NAME" width="10%"></Label>
+  <Input id="sName" width="90%" type="Text" value="{oModel>/update/StudentName}"  />
+
+  <Label id="_IDGenLabel3" text="BRANCH" width="10%"></Label>
+  <Input id="sBranch" width="90%" type="Text" value="{oModel>/update/Branch}"  />
+
+  <Button id="_IDGenButton1" text="Cancel" press="onCancel" />
+
+  <Button id="_IDGenButton2" text="Save" type="Emphasized" press="getUpdate" />
+
+  </Dialog>
+</core:FragmentDefinition>

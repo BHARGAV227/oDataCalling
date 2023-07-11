@@ -1,0 +1,88 @@
+<mvc:View controllerName="project23.controller.View1" xmlns:core="sap.ui.core" 
+    xmlns:suite="sap.suite.ui.microchart" xmlns:mvc="sap.ui.core.mvc" 
+    displayBlock="true" xmlns="sap.m">
+  <Page id="page" title="{i18n>title}">
+    <content>
+<Button id="_IDGenButton2" text="rety" press="test"></Button>
+      <HBox id="_IDGenFlexBox2" visible="false" width="20rem" height="10rem" alignItems="Start" justifyContent="SpaceBetween">
+        <items>
+        <suite:InteractiveDonutChart id="DonutChart1" displayedSegments="4" selectionChanged="onSelectionChanged">
+          <suite:segments>
+            <suite:InteractiveDonutChartSegment  id="_IDGenInteractiveDonutChartSegment1" label="CSE" value="{oModel>/donutChart1/Branch1}" />
+            <suite:InteractiveDonutChartSegment id="_IDGenInteractiveDonutChartSegment2" label="ECE" value="{oModel>/donutChart1/Branch2}" />
+            <suite:InteractiveDonutChartSegment id="_IDGenInteractiveDonutChartSegment3" label="MECH" value="{oModel>/donutChart1/Branch3}" />
+            <suite:InteractiveDonutChartSegment id="_IDGenInteractiveDonutChartSegment4" label="OTHER" value="{oModel>/donutChart1/Branch4}" />
+          </suite:segments>
+        </suite:InteractiveDonutChart>
+        </items>
+      </HBox>
+      
+      <FlexBox id="_IDGenFlexBox1" justifyContent="Center" width="100%">
+        <Button id="getEntitySet" width="150px" type="Attention" text="Get Entity Set" press="getEntitySet" class="sapUiMediumMarginBeginEnd"></Button>
+        <Button id="getEntity" width="150px" type="Success" text="Get Entity" press="setVissible" class="sapUiMediumMarginBeginEnd"></Button>
+        <Button id="getEdit" width="150px" type="Critical" text="Edit" press="onEdit" class="sapUiMediumMarginBeginEnd"></Button>
+        <Button id="getCreate" width="150px" type="Emphasized" text="Create" press="onCreate" class="sapUiMediumMarginBeginEnd"></Button>
+        <Button id="getDelete" width="150px" type="Reject" text="Delete" press="onDelete" class="sapUiMediumMarginBeginEnd"></Button>
+        <Button id="getFilter" width="150px" type="Transparent" text="Branch Filter" press="setVissible2" class="sapUiMediumMarginBeginEnd"></Button>
+      </FlexBox>
+
+      <ToolbarSeparator id="_IDGenToolbarSeparator1"></ToolbarSeparator>
+
+      <Input id="idInput2" visible="false" placeholder="Branch" width="10%"></Input>
+      <Button id="go2" visible="false" text="Go" press="getFilter"></Button>
+
+      <Input id="idInput" visible="false" placeholder="Student Id" width="10%"></Input>
+      <Button id="go" visible="false" text="Go" press="getEntity"></Button>
+
+      <!-- <Table id="dTable" visible="false" items="{oModel>/result}" mode="SingleSelectMaster" growing="true" growingThreshold="5" selectionChange="handleSelectionChange" inset="false"> -->
+      <Table id="dTable" visible="false" items="{oModel>/result}" mode="MultiSelect" growing="true"  inset="false">
+        <headerToolbar>
+          <Toolbar id="tb3">
+            <Title id="tt3" level="H4" text="STUDENT TABLE" />
+            <ToolbarSpacer id="_IDGenToolbarSpacer1" ></ToolbarSpacer>
+            <Button id="coloumn" icon="sap-icon://action-settings" press="cFilter"></Button>
+          </Toolbar>
+        </headerToolbar>
+        <columns>
+          <!-- <Column id="c-00">
+            <Text id="action" text="Action" />
+          </Column> -->
+          <Column id="c-0" visible="{oModel>/cFilter/sId}">
+            <Text id="sId" text="Student Id" />
+          </Column>
+          <Column id="c-1" visible="{oModel>/cFilter/sName}">
+            <Text id="sName" text="Student Name" />
+          </Column>
+          <Column id="c-2" visible="{oModel>/cFilter/sBranch}">
+            <Text id="sBranch" text="Branch" />
+          </Column>
+        </columns>
+        <items>
+          <ColumnListItem id="as-1" type="Navigation">
+            <cells>
+              <!-- <CheckBox id="cb"></CheckBox> -->
+              <Text id="studentId" text="{oModel>StudentId}"></Text>
+              <Text id="studentName" text="{oModel>StudentName}"></Text>
+              <Text id="studentBranch" text="{oModel>Branch}"></Text>
+            </cells>
+          </ColumnListItem>
+        </items>
+      </Table>
+  </content>
+  <!-- dialog -->
+  <Dialog id="_IDGenDialog1" title="SELECT THE COLUMN YOU NEED"  >
+
+    <List id="idList" mode="MultiSelect" >
+
+			<StandardListItem id="_IDGenStandardListItem1" selected="{oModel>/cFilter/sId}" title="Student Id"/>
+			<StandardListItem id="_IDGenStandardListItem2" selected="{oModel>/cFilter/sName}" title="Student Name"/>
+			<StandardListItem id="_IDGenStandardListItem3" selected="{oModel>/cFilter/sBranch}" title="Student Branch"/>
+
+		</List>
+    <FlexBox id="_IDGenFlexBox3" justifyContent="Center" >
+      <Button id="_IDGenButton1" text="Close" press="onCancel" type="Emphasized"></Button>
+    </FlexBox>
+  
+  </Dialog>
+  </Page>
+</mvc:View>
