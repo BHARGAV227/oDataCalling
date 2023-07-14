@@ -25,7 +25,7 @@ sap.ui.define([
                     sName : true,
                     sBranch :true
                 } 
-                this.getView().getModel("oModel").setProperty( "/cFilter", oStatus);  
+                this.getView().getModel("oModel").setProperty("/cFilter,"  oStatus);  
 
             },
             //For setting visible for input 
@@ -33,12 +33,12 @@ sap.ui.define([
                 this.getView().byId("idInput").setVisible(true)
                 this.getView().byId("go").setVisible(true)
             },
-            ////For setting input and go button hide.
+            ////For setting input and go buttons, hide
             setInVissible: function () {
                 this.getView().byId("idInput").setVisible(false)
                 this.getView().byId("go").setVisible(false)
             },
-            // For closing the dialogs
+            //For closing the dialogs
             onCancel: function () {
                 this.newDialog.close();
                 this.newDialog2.close();
