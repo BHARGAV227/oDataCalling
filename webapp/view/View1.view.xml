@@ -27,7 +27,7 @@
       </FlexBox>
 
       <ToolbarSeparator id="_IDGenToolbarSeparator1"></ToolbarSeparator>
-
+      <Input id="_IDGenInput1" liveChange="handleSearch" showValueHelp="true" valueHelpRequest="helpReq" visible="false"></Input>
       <Input id="idInput2" visible="false" placeholder="Branch" width="10%"></Input>
       <Button id="go2" visible="false" text="Go" press="getFilter"></Button>
 

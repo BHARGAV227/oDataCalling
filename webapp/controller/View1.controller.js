@@ -2,15 +2,28 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/odata/v2/ODataModel",
-    'sap/m/MessageToast'
+    "sap/m/MessageToast",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator",
+    "../utils/searchHelp"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, JSONModel, ODataModel, MessageToast) {
+    function (
+        Controller, 
+        JSONModel, 
+        ODataModel, 
+        MessageToast, 
+        Filter, 
+        FilterOperator, 
+        searchHelp
+        ) 
+        {
         "use strict";
 
         return Controller.extend("project23.controller.View1", {
+            searchHelp:searchHelp,
             onInit: function () {
 
             // JSON Model
@@ -58,6 +71,7 @@ sap.ui.define([
                         MessageToast.show("oData call is successful");
                         that.getView().getModel("oModel").setProperty("/result", aData);
                         that.byId("dTable").setVisible(true);
+                        this.getView().byId("_IDGenInput1").setVisible(true)
                         that.donutChart1();
 
                     }
@@ -209,6 +223,7 @@ sap.ui.define([
 
             },
             donutChart1:function(){
+                this.getView().byId("_IDGenInput1").setVisible(true)
                 let branchObj = {
                     Branch1:0,
                     Branch2:0,
@@ -301,6 +316,29 @@ sap.ui.define([
                         changeSetId: i,
                     });
                 }
+            },
+
+            handleSearch:function(){
+                debugger;
+
+                var filter = [];
+                var query = this.getView().byId("_IDGenInput1").getValue()
+                if (query && query.length > 0) {
+                    filter.push(new Filter({
+                        path: "StudentName",
+                        operator: FilterOperator.Contains,
+                        value1: query,
+                    }));
+                }
+                // bind filter with list
+                var getList = this.getView().byId("dTable");
+                var bindingItems = getList.getBinding("items");
+                bindingItems.filter(filter);
+            },
+            helpReq:function(){
+
+                debugger;
+                searchHelp.helpRequest(this)
             }
 
 
