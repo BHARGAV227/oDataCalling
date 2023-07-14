@@ -25,7 +25,7 @@ sap.ui.define([
                     sName : true,
                     sBranch :true
                 } 
-                this.getView().getModel("oModel").setProperty("/cFilter,"  oStatus);  
+                this.getView().getModel("oModel").setProperty("/cFilter",  oStatus);  
 
             },
             //For setting visible for input 
