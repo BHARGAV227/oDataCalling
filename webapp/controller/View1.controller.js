@@ -26,6 +26,7 @@ sap.ui.define([
                     sName : true,
                     sBranch :true
                 } 
+                // hello 
                 this.getView().getModel("oModel").setProperty( "/cFilter", oStatus);  
 
             },
