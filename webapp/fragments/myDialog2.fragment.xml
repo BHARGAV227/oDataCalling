@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" controllerName="project23.controller.View1">
   
-  <Dialog id="_IDGenDialog2" title="ADD NEW STUDENT" contentWidth="30%">
+  <Dialog id="_IDGenDialog2" title="ADD NEW STUDENT" contentWidth="50%">
 
   <Label id="_IDGenLabel22" text="ID" width="10%"></Label>
   <Input id="sIdReg" width="90%" type="Number" value="{oModel>/create/StudentId}"  />

@@ -71,7 +71,7 @@ sap.ui.define([
                         MessageToast.show("oData call is successful");
                         that.getView().getModel("oModel").setProperty("/result", aData);
                         that.byId("dTable").setVisible(true);
-                        this.getView().byId("_IDGenInput1").setVisible(true)
+                        that.getView().byId("_IDGenInput1").setVisible(true)
                         that.donutChart1();
 
                     }
@@ -126,6 +126,7 @@ sap.ui.define([
                 // oData Model
                 const sUrl = "/sap/opu/odata/sap/ZBG_SEGW7_SRV/";
                 const oDataModel = new ODataModel(sUrl, true);
+                let oTable = this.byId("dTable");
                 const that = this; // Store the reference to the outer context
                 let oSelectedObject = this.newDialog.getModel("oModel").getProperty("/update")
                 this.newDialog.close();//Closing the Dialog Box
@@ -141,6 +142,7 @@ sap.ui.define([
                         MessageToast.show("Error occurred while updating the record");
                     }
                 });
+                oTable.removeSelections();
             },
             //To open the Dailog Box to get the data for creating the new record
             onCreate: function () {
@@ -256,23 +258,25 @@ sap.ui.define([
                 let arr = []
                 for (let i=0; i<label.length; i++){
                     if (label[i].getLabel() == "OTHER"){
-                        // let oFilter1 = new sap.ui.model.Filter({
-                        //     path : 'Branch',
-                        //     operator: "NE",
-                        //     value1 :"CSE",
-                        // });
-                        let oFilter2 = new sap.ui.model.Filter({
+                        let oFilter1 = new sap.ui.model.Filter({
                             path : 'Branch',
                             operator: "NE",
                             value1 :"CSE",
-                            operator:"&&",
+                        });
+                        let oFilter2 = new sap.ui.model.Filter({
                             path : 'Branch',
                             operator: "NE",
-                            value2 :"ECE",
+                            value1 :"ECE",
+                        });
+                        let oFilter3 = new sap.ui.model.Filter({
+                            path : 'Branch',
+                            operator: "NE",
+                            value1 :"MECH",
                         });
 
-                    // arr.push(oFilter1)
+                    arr.push(oFilter1)
                     arr.push(oFilter2)
+                    arr.push(oFilter3)
 
                     }
                     else{
@@ -309,7 +313,7 @@ sap.ui.define([
             //             // that.donutChart1();
             //         }
             //     }
-            //     var oUserDetArray = aSelectedItems; 
+            //     let oUserDetArray = aSelectedItems; 
 
             //     oModel.setDeferredGroups(["batchFunctionImport"]);
             //     for (i = 0; i < oUserDetArray.length; i++) {
@@ -324,8 +328,8 @@ sap.ui.define([
             handleSearch:function(){
                 debugger;
 
-                var filter = [];
-                var query = this.getView().byId("_IDGenInput1").getValue()
+                let filter = [];
+                let query = this.getView().byId("_IDGenInput1").getValue()
                 if (query && query.length > 0) {
                     filter.push(new Filter({
                         path: "StudentName",
@@ -334,8 +338,8 @@ sap.ui.define([
                     }));
                 }
                 // bind filter with list
-                var getList = this.getView().byId("dTable");
-                var bindingItems = getList.getBinding("items");
+                let getList = this.getView().byId("dTable");
+                let bindingItems = getList.getBinding("items");
                 bindingItems.filter(filter);
             },
             helpReq:function(){

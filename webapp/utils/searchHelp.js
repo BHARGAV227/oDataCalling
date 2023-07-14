@@ -14,14 +14,14 @@ sap.ui.define([
 
                 debugger;
                 
-                var oInput = that.getView().byId("_IDGenInput1");
+                let oInput = that.getView().byId("_IDGenInput1");
                 if(!this.ovalueHelpDialog){
                     this.ovalueHelpDialog = new sap.ui.comp.valuehelpdialog.ValueHelpDialog("idValueHelp",{
                         key:"StudentName",
                         supportMultiselect : false,
                         ok:function(oEvent){
                             debugger;
-                            var token = oEvent.getParameter("tokens")[0].getText()
+                            let token = oEvent.getParameter("tokens")[0].getText()
                             oInput.setValue(token)
                             this.close()         
                             that.handleSearch()
@@ -32,7 +32,7 @@ sap.ui.define([
                         },
                     })                    
                 }
-                var oColModel = new JSONModel();
+                let oColModel = new JSONModel();
                 oColModel.setData({
                     cols:[
                         {label:"Student Id", template:"StudentId"},
@@ -40,11 +40,11 @@ sap.ui.define([
                         {label:"Branch", template:"Branch"}
                     ]
                 })
-                var oTable = this.ovalueHelpDialog.getTable();
+                let oTable = this.ovalueHelpDialog.getTable();
                 oTable.setModel(oColModel,"columns")
-                var aArrayObject = that.getView().getModel("oModel").getProperty("/result")
-                var oData = {result:aArrayObject}
-                var oRowModel = new JSONModel(oData)
+                let aArrayObject = that.getView().getModel("oModel").getProperty("/result")
+                let oData = {result:aArrayObject}
+                let oRowModel = new JSONModel(oData)
                 oTable.setModel(oRowModel)
                 oTable.bindRows("/result")
                 this.ovalueHelpDialog.open()
