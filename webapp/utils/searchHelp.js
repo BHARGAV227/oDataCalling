@@ -51,7 +51,7 @@ sap.ui.define([
 
                 var oRowModel = new JSONModel(oData)
                 oTable.setModel(oRowModel)
-                oTable.bindRows("/TableData")
+                oTable.bindRows("/result")
                 this.ovalueHelpDialog.open()
 
         
