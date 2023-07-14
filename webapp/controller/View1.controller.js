@@ -201,10 +201,7 @@ sap.ui.define([
                 }
                 else{
                     MessageToast.show("Select atleast one record to perform Delete operation");
-
                 }
-
-
             },
             //For setting visible for input 
             setVissible2: function () {
@@ -235,7 +232,6 @@ sap.ui.define([
                 let oUserTable = this.getView().byId("dTable").getItems();
                 for (let i=0;i< oUserTable.length; i++){
                     let dataObject = oUserTable[i].getBindingContext("oModel").getObject();
-
                     if (dataObject.Branch == "CSE" || dataObject.Branch == "cse"){
                         branchObj.Branch1+=1
                     }
@@ -273,11 +269,9 @@ sap.ui.define([
                             operator: "NE",
                             value1 :"MECH",
                         });
-
                     arr.push(oFilter1)
                     arr.push(oFilter2)
                     arr.push(oFilter3)
-
                     }
                     else{
                         let oFilter1 = new sap.ui.model.Filter({
@@ -289,14 +283,9 @@ sap.ui.define([
                     }
                 }
                 this.getView().byId("dTable").getBinding("items").filter(arr);
-
             },
             cFilter:function(){
-
-
                 this.byId("_IDGenDialog1").open()
-
-                
             },
 
             /*Function import calling*/
@@ -343,7 +332,6 @@ sap.ui.define([
                 bindingItems.filter(filter);
             },
             helpReq:function(){
-
                 debugger;
                 searchHelp.helpRequest(this)
             }
