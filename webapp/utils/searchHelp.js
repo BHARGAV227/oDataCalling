@@ -17,7 +17,7 @@ sap.ui.define([
                 var oInput = that.getView().byId("_IDGenInput1");
                 if(!this.ovalueHelpDialog){
                     this.ovalueHelpDialog = new sap.ui.comp.valuehelpdialog.ValueHelpDialog("idValueHelp",{
-                        key:"Data",
+                        key:"StudentName",
                         supportMultiselect : false,
                         ok:function(oEvent){
                             debugger;
@@ -25,16 +25,13 @@ sap.ui.define([
                             oInput.setValue(token)
                             this.close()         
                             that.handleSearch()
-
                         }, 
                         cancel:function(){
                             debugger;
                             this.close()
-
                         },
                     })                    
                 }
-
                 var oColModel = new JSONModel();
                 oColModel.setData({
                     cols:[
@@ -43,18 +40,14 @@ sap.ui.define([
                         {label:"Branch", template:"Branch"}
                     ]
                 })
-
                 var oTable = this.ovalueHelpDialog.getTable();
                 oTable.setModel(oColModel,"columns")
-
-                var oData = that.getView().getModel("oModel").getProperty("/result")
-
+                var aArrayObject = that.getView().getModel("oModel").getProperty("/result")
+                var oData = {result:aArrayObject}
                 var oRowModel = new JSONModel(oData)
                 oTable.setModel(oRowModel)
                 oTable.bindRows("/result")
                 this.ovalueHelpDialog.open()
-
-        
             }
         
 
