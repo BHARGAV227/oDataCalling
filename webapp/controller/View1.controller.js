@@ -12,8 +12,7 @@ sap.ui.define([
 
         return Controller.extend("project23.controller.View1", {
             onInit: function () {
-            //test program
-            //test program2
+
             // JSON Model
                 const oModel = new JSONModel();
                 this.getView().setModel(oModel, "oModel");
