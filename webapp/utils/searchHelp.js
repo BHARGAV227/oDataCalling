@@ -38,58 +38,16 @@ sap.ui.define([
                 var oColModel = new JSONModel();
                 oColModel.setData({
                     cols:[
-                        {label:"Name", template:"Name"},
-                        {label:"City", template:"City"},
-                        {label:"Data", template:"Data"}
+                        {label:"Student Id", template:"StudentId"},
+                        {label:"Student Name", template:"StudentName"},
+                        {label:"Branch", template:"Branch"}
                     ]
                 })
 
                 var oTable = this.ovalueHelpDialog.getTable();
                 oTable.setModel(oColModel,"columns")
 
-                var oData = {
-                    "TableData":[ 
-                                {
-                                    "Name":"a",
-                                    "City":true,
-                                    "Data":10
-                                },
-                                {
-                                    "Name":"b",
-                                    "City":true,
-                                    "Data":"bhargav"
-                                },
-                                {
-                                    "Name":"c",
-                                    "City":false,
-                                    "Data":true
-                                },
-                                {
-                                    "Name":"d",
-                                    "City":false,
-                                    "Data":new Date(),
-                                },
-                                {
-                                    "Name":"a",
-                                    "City":true,
-                                    "Data":10
-                                },
-                                {
-                                    "Name":"b",
-                                    "City":true,
-                                    "Data":"bhargav"
-                                },
-                                {
-                                    "Name":"c",
-                                    "City":false,
-                                    "Data":true
-                                },
-                                {
-                                    "Name":"d",
-                                    "City":false,
-                                    "Data":new Date(),
-                                }
-                            ]}
+                var oData = that.getView().getModel("oModel").getProperty("/result")
 
                 var oRowModel = new JSONModel(oData)
                 oTable.setModel(oRowModel)
