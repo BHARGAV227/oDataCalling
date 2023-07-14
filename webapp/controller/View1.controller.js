@@ -294,29 +294,32 @@ sap.ui.define([
 
                 
             },
-            test:function(){
 
-                let oTable = this.byId("dTable");
-                const oModel = oTable.getModel("oModel");
-                let oItems = oTable.getItems();
-                let aSelectedItems = [];
-                for (let i = 0; i < oItems.length; i++) {
-                    if (oItems[i].getCells()[0].getSelected()) {
-                        aSelectedItems.push(oItems[i]);
-                        // that.donutChart1();
-                    }
-                }
-                var oUserDetArray = aSelectedItems; 
+            /*Function import calling*/
+            
+            // test:function(){
 
-                oModel.setDeferredGroups(["batchFunctionImport"]);
-                for (i = 0; i < oUserDetArray.length; i++) {
-                    oModel.callFunction("/User_FunctionImp", {
-                        method: "POST",
-                        batchGroupId: "batchFunctionImport",
-                        changeSetId: i,
-                    });
-                }
-            },
+            //     let oTable = this.byId("dTable");
+            //     const oModel = oTable.getModel("oModel");
+            //     let oItems = oTable.getItems();
+            //     let aSelectedItems = [];
+            //     for (let i = 0; i < oItems.length; i++) {
+            //         if (oItems[i].getCells()[0].getSelected()) {
+            //             aSelectedItems.push(oItems[i]);
+            //             // that.donutChart1();
+            //         }
+            //     }
+            //     var oUserDetArray = aSelectedItems; 
+
+            //     oModel.setDeferredGroups(["batchFunctionImport"]);
+            //     for (i = 0; i < oUserDetArray.length; i++) {
+            //         oModel.callFunction("/User_FunctionImp", {
+            //             method: "POST",
+            //             batchGroupId: "batchFunctionImport",
+            //             changeSetId: i,
+            //         });
+            //     }
+            // },
 
             handleSearch:function(){
                 debugger;
