@@ -5,7 +5,9 @@ sap.ui.define([
     "sap/m/MessageToast",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "../utils/searchHelp"
+    "../utils/searchHelp",
+    'sap/ui/export/library',
+	'sap/ui/export/Spreadsheet'
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
@@ -17,10 +19,13 @@ sap.ui.define([
         MessageToast, 
         Filter, 
         FilterOperator, 
-        searchHelp
+        searchHelp,
+        exportLibrary,
+        Spreadsheet
         ) 
         {
         "use strict";
+        var EdmType = exportLibrary.EdmType;
 
         return Controller.extend("project23.controller.View1", {
             searchHelp:searchHelp,
@@ -334,7 +339,62 @@ sap.ui.define([
             helpReq:function(){
                 debugger;
                 searchHelp.helpRequest(this)
+            },
+            createColumnConfig:function(){
+                let aCol = [];
+
+                aCol.push({
+                    label: 'Student Id',
+				    type: EdmType.Number,
+				    property: 'StudentId',
+                })
+
+                aCol.push({
+                    label: 'Student Name',
+				    type: EdmType.String,
+				    property: 'StudentName',
+                })
+
+                aCol.push({
+                    label: 'Branch',
+				    type: EdmType.String,
+				    property: 'Branch',
+                })
+
+                return aCol;
+
+            },
+            onExport: function() {
+                var aCols, oRowBinding, oSettings, oSheet, oTable;
+    
+                if (!this._oTable) {
+                    this._oTable = this.byId('dTable');
+                }
+    
+                oTable = this._oTable;
+                oRowBinding = oTable.getBinding('items');
+                aCols = this.createColumnConfig();
+    
+                oSettings = {
+                    workbook: {
+                        columns: aCols,
+                        hierarchyLevel: 'Level'
+                    },
+                    dataSource: oRowBinding,
+                    fileName: 'Table export sample.xlsx',
+                    worker: false // We need to disable worker because we are using a MockServer as OData Service
+                };
+    
+                oSheet = new Spreadsheet(oSettings);
+                oSheet.build().finally(function() {
+                    oSheet.destroy();
+                });
+            },
+            onUpload:function(Oevent){
+
             }
+
+
 
 
 
