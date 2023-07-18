@@ -48,9 +48,6 @@
           </Toolbar>
         </headerToolbar>
         <columns>
-          <!-- <Column id="c-00">
-            <Text id="action" text="Action" />
-          </Column> -->
           <Column id="c-0" visible="{oModel>/cFilter/sId}">
             <Text id="sId" text="Student Id" />
           </Column>
