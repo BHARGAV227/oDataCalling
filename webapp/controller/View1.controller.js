@@ -6,32 +6,33 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "../utils/searchHelp",
-    'sap/ui/export/library',
-	'sap/ui/export/Spreadsheet'
+    "sap/ui/export/library",
+    "sap/ui/export/Spreadsheet",
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
     function (
-        Controller, 
-        JSONModel, 
-        ODataModel, 
-        MessageToast, 
-        Filter, 
-        FilterOperator, 
+        Controller,
+        JSONModel,
+        ODataModel,
+        MessageToast,
+        Filter,
+        FilterOperator,
         searchHelp,
         exportLibrary,
-        Spreadsheet
-        ) 
-        {
+        Spreadsheet,
+        FileUploader,
+        Dialog
+    ) {
         "use strict";
         var EdmType = exportLibrary.EdmType;
 
         return Controller.extend("project23.controller.View1", {
-            searchHelp:searchHelp,
+            searchHelp: searchHelp,
             onInit: function () {
 
-            // JSON Model
+                // JSON Model
                 const oModel = new JSONModel();
                 this.getView().setModel(oModel, "oModel");
 
@@ -39,11 +40,11 @@ sap.ui.define([
                 this.newDialog2 = sap.ui.xmlfragment("project23.fragments.myDialog2", this);
 
                 let oStatus = {
-                    sId : true,
-                    sName : true,
-                    sBranch :true
-                } 
-                this.getView().getModel("oModel").setProperty("/cFilter",  oStatus);  
+                    sId: true,
+                    sName: true,
+                    sBranch: true
+                }
+                this.getView().getModel("oModel").setProperty("/cFilter", oStatus);
 
             },
             //For setting visible for input 
@@ -78,7 +79,6 @@ sap.ui.define([
                         that.byId("dTable").setVisible(true);
                         that.getView().byId("_IDGenInput1").setVisible(true)
                         that.donutChart1();
-
                     }
                 });
             },
@@ -103,7 +103,7 @@ sap.ui.define([
             onEdit: function (oEvent) {
                 let oTable = this.byId("dTable");
                 const oModel = oTable.getModel("oModel");
-                this.setInVissible()                     
+                this.setInVissible()
                 let aSelectedItems = oTable.getSelectedItems();
                 if (aSelectedItems.length == 1) {
                     const oModel1 = new JSONModel();
@@ -113,7 +113,7 @@ sap.ui.define([
                     let sPath = oSelectedItem.getBindingContextPath();
                     let oSelectedObject = oModel.getProperty(sPath);
                     // Open the dialog and set the values in the inputs
-                    this.newDialog.getModel("oModel").setProperty( "/update", oSelectedObject );              
+                    this.newDialog.getModel("oModel").setProperty("/update", oSelectedObject);
                     this.newDialog.open();
                 }
                 else if (aSelectedItems.length > 1) {
@@ -154,16 +154,16 @@ sap.ui.define([
                 this.setInVissible()
                 const oModel2 = new JSONModel();
                 this.newDialog2.setModel(oModel2, "oModel");
-                let a = {StudentId:'',StudentName:'',Branch:''}
-                this.newDialog2.getModel("oModel").setProperty( "/create",a)
+                let a = { StudentId: '', StudentName: '', Branch: '' }
+                this.newDialog2.getModel("oModel").setProperty("/create", a)
                 this.newDialog2.open();
             },
             //For creating the new record
             getCreate: function () {
                 const sUrl = "/sap/opu/odata/sap/ZBG_SEGW7_SRV/";
-                const oDataModel = new ODataModel(sUrl, true);  
+                const oDataModel = new ODataModel(sUrl, true);
                 const that = this; // Store the reference to the outer context
-                let oObject = this.newDialog2.getModel("oModel").getProperty( "/create")
+                let oObject = this.newDialog2.getModel("oModel").getProperty("/create")
                 oObject.StudentId = parseInt(oObject.StudentId)
                 this.newDialog2.close();    //To close the Dialog box 
                 //oData call to create the new record
@@ -183,9 +183,9 @@ sap.ui.define([
                 this.setInVissible()
                 let oTable = this.byId("dTable");
                 let aSelectedItems = oTable.getSelectedItems();
-                if(aSelectedItems.length != 0){
+                if (aSelectedItems.length != 0) {
                     //Logic for Deleting the selected records 
-                    for (let i = 0; i<aSelectedItems.length;i++ ){
+                    for (let i = 0; i < aSelectedItems.length; i++) {
                         let oSelectedObject = aSelectedItems[i].getBindingContext("oModel").getObject()
                         const that = this; // Store the reference to the outer context
                         const sUrl = "/sap/opu/odata/sap/ZBG_SEGW7_SRV/";
@@ -204,7 +204,7 @@ sap.ui.define([
                         });
                     }
                 }
-                else{
+                else {
                     MessageToast.show("Select atleast one record to perform Delete operation");
                 }
             },
@@ -213,115 +213,85 @@ sap.ui.define([
                 this.getView().byId("idInput2").setVisible(true)
                 this.getView().byId("go2").setVisible(true)
             },
-            getFilter:function(){
+            getFilter: function () {
                 debugger;
                 let branchFilterValue = this.getView().byId("idInput2").getValue()
                 let oFilter1 = new sap.ui.model.Filter({
-                    path : 'Branch',
+                    path: 'Branch',
                     operator: "EQ",
-                    value1 : branchFilterValue
+                    value1: branchFilterValue
                 });
                 let arr = []
                 arr.push(oFilter1);
                 this.getView().byId("dTable").getBinding("items").filter(arr);
-
             },
-            donutChart1:function(){
+            donutChart1: function () {
                 this.getView().byId("_IDGenInput1").setVisible(true)
                 let branchObj = {
-                    Branch1:0,
-                    Branch2:0,
-                    Branch3:0,
-                    Branch4:0
+                    Branch1: 0,
+                    Branch2: 0,
+                    Branch3: 0,
+                    Branch4: 0
                 }
                 let oUserTable = this.getView().byId("dTable").getItems();
-                for (let i=0;i< oUserTable.length; i++){
+                for (let i = 0; i < oUserTable.length; i++) {
                     let dataObject = oUserTable[i].getBindingContext("oModel").getObject();
-                    if (dataObject.Branch == "CSE" || dataObject.Branch == "cse"){
-                        branchObj.Branch1+=1
+                    if (dataObject.Branch == "CSE" || dataObject.Branch == "cse") {
+                        branchObj.Branch1 += 1
                     }
-                    else if (dataObject.Branch == "ECE" || dataObject.Branch == "ece"  ){
-                        branchObj.Branch2+=1
-                    } 
-                    else if(dataObject.Branch == "MECH" || dataObject.Branch == "mech"){
-                        branchObj.Branch3+=1
+                    else if (dataObject.Branch == "ECE" || dataObject.Branch == "ece") {
+                        branchObj.Branch2 += 1
                     }
-                    else{
-                        branchObj.Branch4+=1
+                    else if (dataObject.Branch == "MECH" || dataObject.Branch == "mech") {
+                        branchObj.Branch3 += 1
                     }
-
+                    else {
+                        branchObj.Branch4 += 1
+                    }
                 }
-                this.getView().getModel("oModel").setProperty( "/donutChart1", branchObj);              
+                this.getView().getModel("oModel").setProperty("/donutChart1", branchObj);
                 this.getView().byId("_IDGenFlexBox2").setVisible(true)
             },
-            onSelectionChanged:function(oEvent){
+            onSelectionChanged: function (oEvent) {
                 let label = oEvent.oSource.getSelectedSegments()
                 let arr = []
-                for (let i=0; i<label.length; i++){
-                    if (label[i].getLabel() == "OTHER"){
+                for (let i = 0; i < label.length; i++) {
+                    if (label[i].getLabel() == "OTHER") {
                         let oFilter1 = new sap.ui.model.Filter({
-                            path : 'Branch',
+                            path: 'Branch',
                             operator: "NE",
-                            value1 :"CSE",
+                            value1: "CSE",
                         });
                         let oFilter2 = new sap.ui.model.Filter({
-                            path : 'Branch',
+                            path: 'Branch',
                             operator: "NE",
-                            value1 :"ECE",
+                            value1: "ECE",
                         });
                         let oFilter3 = new sap.ui.model.Filter({
-                            path : 'Branch',
+                            path: 'Branch',
                             operator: "NE",
-                            value1 :"MECH",
+                            value1: "MECH",
                         });
-                    arr.push(oFilter1)
-                    arr.push(oFilter2)
-                    arr.push(oFilter3)
+                        arr.push(oFilter1)
+                        arr.push(oFilter2)
+                        arr.push(oFilter3)
                     }
-                    else{
+                    else {
                         let oFilter1 = new sap.ui.model.Filter({
-                            path : 'Branch',
+                            path: 'Branch',
                             operator: "EQ",
-                            value1 :label[i].getLabel()
+                            value1: label[i].getLabel()
                         });
-                    arr.push(oFilter1)
+                        arr.push(oFilter1)
                     }
                 }
                 this.getView().byId("dTable").getBinding("items").filter(arr);
             },
-            cFilter:function(){
+            cFilter: function () {
                 this.byId("_IDGenDialog1").open()
             },
-
-            /*Function import calling*/
-            
-            // test:function(){
-
-            //     let oTable = this.byId("dTable");
-            //     const oModel = oTable.getModel("oModel");
-            //     let oItems = oTable.getItems();
-            //     let aSelectedItems = [];
-            //     for (let i = 0; i < oItems.length; i++) {
-            //         if (oItems[i].getCells()[0].getSelected()) {
-            //             aSelectedItems.push(oItems[i]);
-            //             // that.donutChart1();
-            //         }
-            //     }
-            //     let oUserDetArray = aSelectedItems; 
-
-            //     oModel.setDeferredGroups(["batchFunctionImport"]);
-            //     for (i = 0; i < oUserDetArray.length; i++) {
-            //         oModel.callFunction("/User_FunctionImp", {
-            //             method: "POST",
-            //             batchGroupId: "batchFunctionImport",
-            //             changeSetId: i,
-            //         });
-            //     }
-            // },
-
-            handleSearch:function(){
+            handleSearch: function () {
                 debugger;
-
                 let filter = [];
                 let query = this.getView().byId("_IDGenInput1").getValue()
                 if (query && query.length > 0) {
@@ -336,45 +306,37 @@ sap.ui.define([
                 let bindingItems = getList.getBinding("items");
                 bindingItems.filter(filter);
             },
-            helpReq:function(){
+            helpReq: function () {
                 debugger;
                 searchHelp.helpRequest(this)
             },
-            createColumnConfig:function(){
+            createColumnConfig: function () {
                 let aCol = [];
-
                 aCol.push({
                     label: 'Student Id',
-				    type: EdmType.Number,
-				    property: 'StudentId',
+                    type: EdmType.Number,
+                    property: 'StudentId',
                 })
-
                 aCol.push({
                     label: 'Student Name',
-				    type: EdmType.String,
-				    property: 'StudentName',
+                    type: EdmType.String,
+                    property: 'StudentName',
                 })
-
                 aCol.push({
                     label: 'Branch',
-				    type: EdmType.String,
-				    property: 'Branch',
+                    type: EdmType.String,
+                    property: 'Branch',
                 })
-
                 return aCol;
-
             },
-            onExport: function() {
+            onExport: function () {
                 var aCols, oRowBinding, oSettings, oSheet, oTable;
-    
                 if (!this._oTable) {
                     this._oTable = this.byId('dTable');
                 }
-    
                 oTable = this._oTable;
                 oRowBinding = oTable.getBinding('items');
                 aCols = this.createColumnConfig();
-    
                 oSettings = {
                     workbook: {
                         columns: aCols,
@@ -384,15 +346,34 @@ sap.ui.define([
                     fileName: 'Table export sample.xlsx',
                     worker: false // We need to disable worker because we are using a MockServer as OData Service
                 };
-    
                 oSheet = new Spreadsheet(oSettings);
-                oSheet.build().finally(function() {
+                oSheet.build().finally(function () {
                     oSheet.destroy();
                 });
             },
-            onUpload:function(Oevent){
-
-            }
+            handleUploadPress: function (oEvent) {
+                debugger;
+                var that = this;
+                this.fixedDialog = new sap.m.Dialog({
+                    title: "choose a file",
+                    beginButton: new sap.m.Button({
+                        text: "Upload",
+                        press: function (e) {
+                            that.fixedDialog.close();
+                        }
+                    }),
+                    content: [new FileUploader("excelUploader")],
+                    endButton: new sap.m.Button({
+                        text: "Cancel",
+                        press: function () {
+                            that.fixedDialog.close();
+                        }
+                    }),
+                })
+                this.getView().addDependent(this.fixedDialog)
+                this.fixedDialog.open()
+                this.fixedDialog.attachBeforeClose(this.setDataFromExcel, this);
+            },
 
 
 

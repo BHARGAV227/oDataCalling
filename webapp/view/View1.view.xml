@@ -1,9 +1,9 @@
-<mvc:View controllerName="project23.controller.View1" xmlns:core="sap.ui.core" 
+<mvc:View controllerName="project23.controller.View1" xmlns:core="sap.ui.core" 	
     xmlns:suite="sap.suite.ui.microchart" xmlns:mvc="sap.ui.core.mvc" 
     displayBlock="true" xmlns="sap.m">
   <Page id="page" title="{i18n>title}">
     <content>
-<Button id="_IDGenButton2" text="rety" press="test"></Button>
+<!-- <Button id="_IDGenButton2" text="rety" press="test"></Button> -->
       <HBox id="_IDGenFlexBox2" visible="false" width="20rem" height="10rem" alignItems="Start" justifyContent="SpaceBetween">
         <items>
         <suite:InteractiveDonutChart id="DonutChart1" displayedSegments="4" selectionChanged="onSelectionChanged">
@@ -26,6 +26,8 @@
         <Button id="getFilter" width="150px" type="Transparent" text="Branch Filter" press="setVissible2" class="sapUiMediumMarginBeginEnd"></Button>
       </FlexBox>
 
+      <Button id="_IDGenButton2" text="Upload" type="Accept" press="onUploadFile"/>
+
       <ToolbarSeparator id="_IDGenToolbarSeparator1"></ToolbarSeparator>
       <Input id="_IDGenInput1" liveChange="handleSearch" showValueHelp="true" valueHelpRequest="helpReq" visible="false" showSuggestion="true" suggestionItems="{oModel>/result}">
       <core:Item id="_IDGenItem1" key="{oModel>StudentName}" text="{oModel>StudentName}" ></core:Item>
@@ -44,10 +46,13 @@
             <ToolbarSpacer id="_IDGenToolbarSpacer1" ></ToolbarSpacer>
             <Button id="coloumn" icon="sap-icon://action-settings" press="cFilter"></Button>
             <Button id="tableExport" icon="sap-icon://excel-attachment" press="onExport"></Button>
-            <Button id="excelUplode" icon="sap-icon://upload" press="onUpload"></Button>
+            <Button id="excelUplode" icon="sap-icon://upload" press="handleUploadPress"></Button>
           </Toolbar>
         </headerToolbar>
         <columns>
+          <!-- <Column id="c-00">
+            <Text id="action" text="Action" />
+          </Column> -->
           <Column id="c-0" visible="{oModel>/cFilter/sId}">
             <Text id="sId" text="Student Id" />
           </Column>
