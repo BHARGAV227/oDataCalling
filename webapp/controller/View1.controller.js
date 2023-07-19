@@ -22,8 +22,7 @@ sap.ui.define([
         searchHelp,
         exportLibrary,
         Spreadsheet,
-        FileUploader,
-        Dialog
+        FileUploader
     ) {
         "use strict";
         var EdmType = exportLibrary.EdmType;
@@ -31,7 +30,9 @@ sap.ui.define([
         return Controller.extend("project23.controller.View1", {
             searchHelp: searchHelp,
             onInit: function () {
-
+                var oModelNew = new JSONModel();
+                oModelNew.loadData("/json/test.json")
+                this.getView().setModel(oModelNew, "oModelNew");
                 // JSON Model
                 const oModel = new JSONModel();
                 this.getView().setModel(oModel, "oModel");
@@ -255,37 +256,63 @@ sap.ui.define([
             onSelectionChanged: function (oEvent) {
                 let label = oEvent.oSource.getSelectedSegments()
                 let arr = []
-                for (let i = 0; i < label.length; i++) {
-                    if (label[i].getLabel() == "OTHER") {
-                        let oFilter1 = new sap.ui.model.Filter({
-                            path: 'Branch',
-                            operator: "NE",
-                            value1: "CSE",
-                        });
-                        let oFilter2 = new sap.ui.model.Filter({
-                            path: 'Branch',
-                            operator: "NE",
-                            value1: "ECE",
-                        });
-                        let oFilter3 = new sap.ui.model.Filter({
-                            path: 'Branch',
-                            operator: "NE",
-                            value1: "MECH",
-                        });
-                        arr.push(oFilter1)
-                        arr.push(oFilter2)
-                        arr.push(oFilter3)
+                let arrayCheck = []
+                if(label.length == 0){
+                    this.getView().byId("dTable").getBinding("items").filter(new sap.ui.model.Filter({
+                                filters: arr,
+                                and:true
+                            }));
+                }
+                else{
+                    for (let i = 0; i < label.length; i++) {
+                        arrayCheck.push(label[i].getLabel())
+                        if (label[i].getLabel() == "OTHER") {
+                            let oFilter1 = new sap.ui.model.Filter({
+                                path: 'Branch',
+                                operator: "NE",
+                                value1: "CSE",
+                            });
+                            let oFilter2 = new sap.ui.model.Filter({
+                                path: 'Branch',
+                                operator: "NE",
+                                value1: "ECE",
+                            });
+                            let oFilter3 = new sap.ui.model.Filter({
+                                path: 'Branch',
+                                operator: "NE",
+                                value1: "MECH",
+                            });
+                            if(arrayCheck.indexOf("CSE") === -1 ){
+                                arr.push(oFilter1)
+                            }
+                            if(arrayCheck.indexOf("ECE") === -1 ){
+                                arr.push(oFilter2)
+                            }
+                            if(arrayCheck.indexOf("MECH") === -1 ){
+                                arr.push(oFilter3)
+                            }
+                            this.getView().byId("dTable").getBinding("items").filter(
+                                new sap.ui.model.Filter({
+                                filters: arr,
+                                and:true
+                            }));
+                        }
                     }
-                    else {
-                        let oFilter1 = new sap.ui.model.Filter({
-                            path: 'Branch',
-                            operator: "EQ",
-                            value1: label[i].getLabel()
-                        });
-                        arr.push(oFilter1)
+                    for (let i = 0; i < arrayCheck.length; i++){
+                        
+                        if(arrayCheck.indexOf("OTHER") === -1 )
+                        {
+                            let oFilter1 = new sap.ui.model.Filter({
+                                path: 'Branch',
+                                operator: "EQ",
+                                value1: label[i].getLabel()
+                            });
+                            arr.push(oFilter1)
+                            this.getView().byId("dTable").getBinding("items").filter(arr)
+                        }
                     }
                 }
-                this.getView().byId("dTable").getBinding("items").filter(arr);
+
             },
             cFilter: function () {
                 this.byId("_IDGenDialog1").open()

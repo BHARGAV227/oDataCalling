@@ -25,9 +25,7 @@
         <Button id="getDelete" width="150px" type="Reject" text="Delete" press="onDelete" class="sapUiMediumMarginBeginEnd"></Button>
         <Button id="getFilter" width="150px" type="Transparent" text="Branch Filter" press="setVissible2" class="sapUiMediumMarginBeginEnd"></Button>
       </FlexBox>
-
-      <Button id="_IDGenButton2" text="Upload" type="Accept" press="onUploadFile"/>
-
+      
       <ToolbarSeparator id="_IDGenToolbarSeparator1"></ToolbarSeparator>
       <Input id="_IDGenInput1" liveChange="handleSearch" showValueHelp="true" valueHelpRequest="helpReq" visible="false" showSuggestion="true" suggestionItems="{oModel>/result}">
       <core:Item id="_IDGenItem1" key="{oModel>StudentName}" text="{oModel>StudentName}" ></core:Item>
