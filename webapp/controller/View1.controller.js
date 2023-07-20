@@ -8,6 +8,7 @@ sap.ui.define([
     "../utils/searchHelp",
     "sap/ui/export/library",
     "sap/ui/export/Spreadsheet",
+    'sap/ui/core/Fragment'
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
@@ -22,7 +23,8 @@ sap.ui.define([
         searchHelp,
         exportLibrary,
         Spreadsheet,
-        FileUploader
+        FileUploader,
+        Fragment
     ) {
         "use strict";
         var EdmType = exportLibrary.EdmType;
@@ -258,10 +260,7 @@ sap.ui.define([
                 let arr = []
                 let arrayCheck = []
                 if(label.length == 0){
-                    this.getView().byId("dTable").getBinding("items").filter(new sap.ui.model.Filter({
-                                filters: arr,
-                                and:true
-                            }));
+                    this.getView().byId("dTable").getBinding("items").filter(arr);
                 }
                 else{
                     for (let i = 0; i < label.length; i++) {
@@ -307,12 +306,109 @@ sap.ui.define([
                                 operator: "EQ",
                                 value1: label[i].getLabel()
                             });
-                            arr.push(oFilter1)
                             this.getView().byId("dTable").getBinding("items").filter(arr)
                         }
                     }
                 }
 
+            },
+
+            onSelectionChanged2: function (oEvent) {
+                let label = oEvent.oSource.getSelectedSegments()
+                let arrayCheck = []
+                if(label.length == 0 ){
+                    this.getView().byId("dTable").getBinding("items").filter([]);
+                }
+                else{
+                    for (let i = 0; i < label.length; i++) {
+                        arrayCheck.push(label[i].getLabel())
+                        
+                        if (label[i].getLabel() == "OTHER") {
+                            let oFilter1 = new sap.ui.model.Filter({
+                                path: 'Branch',
+                                operator: "NE",
+                                value1: "CSE",
+                            });
+                            let oFilter2 = new sap.ui.model.Filter({
+                                path: 'Branch',
+                                operator: "NE",
+                                value1: "ECE",
+                            });
+                            let oFilter3 = new sap.ui.model.Filter({
+                                path: 'Branch',
+                                operator: "NE",
+                                value1: "MECH",
+                            });
+                            if(arrayCheck.indexOf("CSE") === -1 ){
+                                arr.push(oFilter1)
+                            }
+                            if(arrayCheck.indexOf("ECE") === -1 ){
+                                arr.push(oFilter2)
+                            }
+                            if(arrayCheck.indexOf("MECH") === -1 ){
+                                arr.push(oFilter3)
+                            }
+                            this.getView().byId("dTable").getBinding("items").filter(
+                                new sap.ui.model.Filter({
+                                filters: arr,
+                                and:true
+                            }));
+                            this.onOpenPopover(oEvent)
+                        }
+                    }
+                    for (let i = 0; i < arrayCheck.length; i++){
+                        
+                        if(arrayCheck.indexOf("OTHER") === -1 )
+                        {
+                            let oFilter1 = new sap.ui.model.Filter({
+                                path: 'Branch',
+                                operator: "EQ",
+                                value1: label[i].getLabel()
+                            });
+                            arr.push(oFilter1)
+                            this.getView().byId("dTable").getBinding("items").filter(arr)
+                        }
+                    }
+                }
+            },
+            closePop:function(){
+                this.getView().byId("myPopover").setVisible(false)
+            },
+            onOpenPopover: function (oEvent) {
+                debugger;
+                let oPopover = this.getView().byId("myPopover")
+                oPopover.setVisible(true)
+                var oButton = oEvent.getSource();
+                oPopover.openBy(oButton);
+                let oArray = []
+                let arr = []
+                let oBinding = this.getView().getModel("oModel").getProperty("/result")
+                for (let i =0 ; i<oBinding.length ; i++){
+                    let oTemp = oBinding[i].Branch
+                    oTemp = oTemp.toLowerCase()
+                    if(oTemp != "cse" && oTemp != "ece" && oTemp != "mech"){
+                        oTemp = oTemp.toUpperCase()
+                        arr.push(oTemp)
+                    }
+                }
+                arr = [...new Set(arr)];
+                for (let i =0 ; i<arr.length ; i++){
+                    var oTempObject = {
+                        Branch : arr[i]
+                    }
+                    oArray.push(oTempObject)
+                }
+                this.getView().getModel("oModel").setProperty("/input",oArray)
+            },
+            handleSelectionChange:function(){
+
+                var oList = this.getView().byId("_IDGenList1").getSelectedItems()
+                let oArray = []
+                for(let i = 0; i<oList.length;i++){
+                    var title  = oList[i].getTitle()
+                    oArray.push(new sap.ui.model.Filter({path: 'Branch',operator: "EQ", value1: title}))
+                }
+                this.getView().byId("dTable").getBinding("items").filter(oArray)
             },
             cFilter: function () {
                 this.byId("_IDGenDialog1").open()

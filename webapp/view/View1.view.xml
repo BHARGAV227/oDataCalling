@@ -15,6 +15,18 @@
           </suite:segments>
         </suite:InteractiveDonutChart>
         </items>
+
+        <items>
+        <suite:InteractiveDonutChart id="DonutChart12" displayedSegments="4" selectionChanged="onSelectionChanged2">
+          <suite:segments>
+            <suite:InteractiveDonutChartSegment  id="_IDGenInteractiveDonutChartSegment21" label="CSE" value="{oModel>/donutChart1/Branch1}" />
+            <suite:InteractiveDonutChartSegment id="_IDGenInteractiveDonutChartSegment22" label="ECE" value="{oModel>/donutChart1/Branch2}" />
+            <suite:InteractiveDonutChartSegment id="_IDGenInteractiveDonutChartSegment23" label="MECH" value="{oModel>/donutChart1/Branch3}" />
+            <suite:InteractiveDonutChartSegment id="_IDGenInteractiveDonutChartSegment24" label="OTHER" value="{oModel>/donutChart1/Branch4}" />
+          </suite:segments>
+        </suite:InteractiveDonutChart>
+        </items>
+        
       </HBox>
       
       <FlexBox id="_IDGenFlexBox1" justifyContent="Center" width="100%">
@@ -88,5 +100,21 @@
     </FlexBox>
   
   </Dialog>
+
+  <Popover
+		id="myPopover"
+    visible="false"
+		showHeader="false"
+		contentWidth="220px"
+		contentHeight="200px"
+		placement="Right"
+		ariaLabelledBy="master-title" >
+        <List id="_IDGenList1" items="{oModel>/input}"  selectionChange="handleSelectionChange" mode="MultiSelect">
+            <StandardListItem id="outlist1" selected="true"  title="{oModel>Branch}"></StandardListItem>
+        </List>
+        <Button id="_IDGenButton2" text="close" press="closePop"></Button>
+	</Popover>
+
+
   </Page>
 </mvc:View>
