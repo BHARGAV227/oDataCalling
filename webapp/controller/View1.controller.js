@@ -27,12 +27,12 @@ sap.ui.define([
         Fragment
     ) {
         "use strict";
-        var EdmType = exportLibrary.EdmType;
+        let EdmType = exportLibrary.EdmType;
 
         return Controller.extend("project23.controller.View1", {
             searchHelp: searchHelp,
             onInit: function () {
-                var oModelNew = new JSONModel();
+                let oModelNew = new JSONModel();
                 oModelNew.loadData("/json/test.json")
                 this.getView().setModel(oModelNew, "oModelNew");
                 // JSON Model
@@ -81,6 +81,7 @@ sap.ui.define([
                         that.getView().getModel("oModel").setProperty("/result", aData);
                         that.byId("dTable").setVisible(true);
                         that.getView().byId("_IDGenInput1").setVisible(true)
+                        that.getView().byId("_IDGenOverflowToolbar1").setVisible(true)
                         that.donutChart1();
                     }
                 });
@@ -97,6 +98,7 @@ sap.ui.define([
                         MessageToast.show("oData call is successful");
                         that.getView().getModel("oModel").setProperty("/result", oData.results);
                         that.byId("dTable").setVisible(true);
+                        that.getView().byId("_IDGenOverflowToolbar1").setVisible(true)
                         that.donutChart1();
                     }
                 });
@@ -219,14 +221,20 @@ sap.ui.define([
             getFilter: function () {
                 debugger;
                 let branchFilterValue = this.getView().byId("idInput2").getValue()
-                let oFilter1 = new sap.ui.model.Filter({
-                    path: 'Branch',
-                    operator: "EQ",
-                    value1: branchFilterValue
-                });
-                let arr = []
-                arr.push(oFilter1);
-                this.getView().byId("dTable").getBinding("items").filter(arr);
+                if(branchFilterValue = ''){
+                    this.getView().byId("dTable").getBinding("items").filter([]);
+                }
+                else{
+                    branchFilterValue = branchFilterValue.toUpperCase()
+                    let oFilter1 = new sap.ui.model.Filter({
+                        path: 'Branch',
+                        operator: "EQ",
+                        value1: branchFilterValue
+                    });
+                    let arr = []
+                    arr.push(oFilter1);
+                    this.getView().byId("dTable").getBinding("items").filter(arr);
+                }
             },
             donutChart1: function () {
                 this.getView().byId("_IDGenInput1").setVisible(true)
@@ -245,9 +253,6 @@ sap.ui.define([
                     else if (dataObject.Branch == "ECE" || dataObject.Branch == "ece") {
                         branchObj.Branch2 += 1
                     }
-                    else if (dataObject.Branch == "MECH" || dataObject.Branch == "mech") {
-                        branchObj.Branch3 += 1
-                    }
                     else {
                         branchObj.Branch4 += 1
                     }
@@ -262,6 +267,7 @@ sap.ui.define([
                 if(label.length == 0){
                     this.getView().byId("dTable").getBinding("items").filter(arr);
                 }
+
                 else{
                     for (let i = 0; i < label.length; i++) {
                         arrayCheck.push(label[i].getLabel())
@@ -306,70 +312,45 @@ sap.ui.define([
                                 operator: "EQ",
                                 value1: label[i].getLabel()
                             });
-                            this.getView().byId("dTable").getBinding("items").filter(arr)
+                            this.getView().byId("dTable").getBinding("items").filter(oFilter1)
                         }
                     }
                 }
 
             },
 
-            onSelectionChanged2: function (oEvent) {
-                let label = oEvent.oSource.getSelectedSegments()
-                let arrayCheck = []
-                if(label.length == 0 ){
-                    this.getView().byId("dTable").getBinding("items").filter([]);
-                }
-                else{
-                    for (let i = 0; i < label.length; i++) {
-                        arrayCheck.push(label[i].getLabel())
-                        
-                        if (label[i].getLabel() == "OTHER") {
-                            let oFilter1 = new sap.ui.model.Filter({
-                                path: 'Branch',
-                                operator: "NE",
-                                value1: "CSE",
-                            });
-                            let oFilter2 = new sap.ui.model.Filter({
-                                path: 'Branch',
-                                operator: "NE",
-                                value1: "ECE",
-                            });
-                            let oFilter3 = new sap.ui.model.Filter({
-                                path: 'Branch',
-                                operator: "NE",
-                                value1: "MECH",
-                            });
-                            if(arrayCheck.indexOf("CSE") === -1 ){
-                                arr.push(oFilter1)
-                            }
-                            if(arrayCheck.indexOf("ECE") === -1 ){
-                                arr.push(oFilter2)
-                            }
-                            if(arrayCheck.indexOf("MECH") === -1 ){
-                                arr.push(oFilter3)
-                            }
-                            this.getView().byId("dTable").getBinding("items").filter(
-                                new sap.ui.model.Filter({
-                                filters: arr,
-                                and:true
-                            }));
-                            this.onOpenPopover(oEvent)
-                        }
+            onSelectionChanged2:function(oEvent){
+
+                let selectedSegment = oEvent.getParameter("segment").getLabel();    // Fetching currently selected lable from donut chart
+                let label = oEvent.oSource.getSelectedSegments();                   // Fetching the selected segments from donut chart
+                let oList = this.getView().byId("_IDGenList1").getSelectedItems()   // Fetching the selected items from the List
+                let arrayCheck = [];                                                // For storing the all he selected branchs 
+                let arr = [];                                                       // For storing the filters 
+                // setting others as selected
+                if (selectedSegment == "OTHER"){
+                    let aList = this.getView().byId("DonutChart12").getSegments()
+                    if (oList.length != 0){
+                        aList[2].setSelected(true)
                     }
-                    for (let i = 0; i < arrayCheck.length; i++){
-                        
-                        if(arrayCheck.indexOf("OTHER") === -1 )
-                        {
-                            let oFilter1 = new sap.ui.model.Filter({
-                                path: 'Branch',
-                                operator: "EQ",
-                                value1: label[i].getLabel()
-                            });
-                            arr.push(oFilter1)
-                            this.getView().byId("dTable").getBinding("items").filter(arr)
-                        }
+                    this.onOpenPopover(oEvent)
+                }
+                // Fetching the Selected Segments from Donut Chart
+                for (let i = 0; i < label.length; i++) {
+                    arrayCheck.push(label[i].getLabel())
+                }
+                // Fetching the Selected items from Pop Over list
+                if(arrayCheck.indexOf("OTHER" != -1 )){
+                    for (let i = 0; i < oList.length; i++) {
+                        arrayCheck.push(oList[i].getTitle())
                     }
                 }
+                // creating the filters
+                for (let i = 0; i < arrayCheck.length; i++){  
+                    let oFilter1 = new sap.ui.model.Filter({ path: 'Branch', operator: "EQ", value1: arrayCheck[i] });
+                    arr.push(oFilter1);
+                }
+                // Setting all the filters to the table
+                this.getView().byId("dTable").getBinding("items").filter(arr);
             },
             closePop:function(){
                 this.getView().byId("myPopover").setVisible(false)
@@ -378,23 +359,32 @@ sap.ui.define([
                 debugger;
                 let oPopover = this.getView().byId("myPopover")
                 oPopover.setVisible(true)
-                var oButton = oEvent.getSource();
+                let oButton = oEvent.getSource();
                 oPopover.openBy(oButton);
                 let oArray = []
                 let arr = []
+                
                 let oBinding = this.getView().getModel("oModel").getProperty("/result")
                 for (let i =0 ; i<oBinding.length ; i++){
                     let oTemp = oBinding[i].Branch
                     oTemp = oTemp.toLowerCase()
-                    if(oTemp != "cse" && oTemp != "ece" && oTemp != "mech"){
+                    if(oTemp != "cse" && oTemp != "ece"){
                         oTemp = oTemp.toUpperCase()
                         arr.push(oTemp)
                     }
                 }
+
+                let count= {}
+
+                arr.forEach(element => {
+                    count[element] = (count[element] || 0) + 1;
+                });
+
                 arr = [...new Set(arr)];
                 for (let i =0 ; i<arr.length ; i++){
-                    var oTempObject = {
-                        Branch : arr[i]
+                    let oTempObject = {
+                        Branch : arr[i],
+                        Count : count[arr[i]]
                     }
                     oArray.push(oTempObject)
                 }
@@ -402,12 +392,22 @@ sap.ui.define([
             },
             handleSelectionChange:function(){
 
-                var oList = this.getView().byId("_IDGenList1").getSelectedItems()
+                let oList = this.getView().byId("_IDGenList1").getSelectedItems()
+
+                let label = this.getView().byId("DonutChart12").getSelectedSegments()
                 let oArray = []
+
+                // let arrayCheck = []
+                for (let i = 0; i < label.length; i++) {
+                    // arrayCheck.push(label[i].getLabel())
+                    oArray.push(new sap.ui.model.Filter({path: 'Branch',operator: "EQ", value1: label[i].getLabel()}))
+                }
+
                 for(let i = 0; i<oList.length;i++){
-                    var title  = oList[i].getTitle()
+                    let title  = oList[i].getTitle()
                     oArray.push(new sap.ui.model.Filter({path: 'Branch',operator: "EQ", value1: title}))
                 }
+
                 this.getView().byId("dTable").getBinding("items").filter(oArray)
             },
             cFilter: function () {
@@ -433,6 +433,10 @@ sap.ui.define([
                 debugger;
                 searchHelp.helpRequest(this)
             },
+            onSelect: function(){
+                this.getView().byId("_IDGenButton4").setVisible(true)
+                this.getView().byId("_IDGenButton5").setVisible(true)
+            },
             createColumnConfig: function () {
                 let aCol = [];
                 aCol.push({
@@ -453,7 +457,7 @@ sap.ui.define([
                 return aCol;
             },
             onExport: function () {
-                var aCols, oRowBinding, oSettings, oSheet, oTable;
+                let aCols, oRowBinding, oSettings, oSheet, oTable;
                 if (!this._oTable) {
                     this._oTable = this.byId('dTable');
                 }
@@ -476,7 +480,7 @@ sap.ui.define([
             },
             handleUploadPress: function (oEvent) {
                 debugger;
-                var that = this;
+                let that = this;
                 this.fixedDialog = new sap.m.Dialog({
                     title: "choose a file",
                     beginButton: new sap.m.Button({
