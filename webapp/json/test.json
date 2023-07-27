@@ -1,4 +1,19 @@
 {
     "bhargav":{ "bbg": "bhargav gandhi"},
-    "abc":[]
+    "abc":[],
+    "details":[],
+    "obj1":{
+        "branchA":" " ,
+        "branchB":" "
+    },
+    "obj2":{
+        "countA":0,
+        "countB":0
+    },
+    "count":{
+        "res":0
+    },
+    "ans1":[],
+    "val1":[],
+    "Others":[]
 }

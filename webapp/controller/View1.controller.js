@@ -83,11 +83,13 @@ sap.ui.define([
                         that.getView().byId("_IDGenInput1").setVisible(true)
                         that.getView().byId("_IDGenOverflowToolbar1").setVisible(true)
                         that.donutChart1();
+                        that.onSelectionChange();
                     }
                 });
             },
             //For getting the total number of records in the DB Table
             getEntitySet: function () {
+
                 this.setInVissible()
                 // oData Model
                 const sUrl = "/sap/opu/odata/sap/ZBG_SEGW7_SRV/";
@@ -100,6 +102,8 @@ sap.ui.define([
                         that.byId("dTable").setVisible(true);
                         that.getView().byId("_IDGenOverflowToolbar1").setVisible(true)
                         that.donutChart1();
+                        that.donutChartCount.call(that);
+                        that.onSelectionChange();
                     }
                 });
 
@@ -221,10 +225,10 @@ sap.ui.define([
             getFilter: function () {
                 debugger;
                 let branchFilterValue = this.getView().byId("idInput2").getValue()
-                if(branchFilterValue = ''){
+                if (branchFilterValue = '') {
                     this.getView().byId("dTable").getBinding("items").filter([]);
                 }
-                else{
+                else {
                     branchFilterValue = branchFilterValue.toUpperCase()
                     let oFilter1 = new sap.ui.model.Filter({
                         path: 'Branch',
@@ -260,66 +264,7 @@ sap.ui.define([
                 this.getView().getModel("oModel").setProperty("/donutChart1", branchObj);
                 this.getView().byId("_IDGenFlexBox2").setVisible(true)
             },
-            onSelectionChanged: function (oEvent) {
-                let label = oEvent.oSource.getSelectedSegments()
-                let arr = []
-                let arrayCheck = []
-                if(label.length == 0){
-                    this.getView().byId("dTable").getBinding("items").filter(arr);
-                }
-
-                else{
-                    for (let i = 0; i < label.length; i++) {
-                        arrayCheck.push(label[i].getLabel())
-                        if (label[i].getLabel() == "OTHER") {
-                            let oFilter1 = new sap.ui.model.Filter({
-                                path: 'Branch',
-                                operator: "NE",
-                                value1: "CSE",
-                            });
-                            let oFilter2 = new sap.ui.model.Filter({
-                                path: 'Branch',
-                                operator: "NE",
-                                value1: "ECE",
-                            });
-                            let oFilter3 = new sap.ui.model.Filter({
-                                path: 'Branch',
-                                operator: "NE",
-                                value1: "MECH",
-                            });
-                            if(arrayCheck.indexOf("CSE") === -1 ){
-                                arr.push(oFilter1)
-                            }
-                            if(arrayCheck.indexOf("ECE") === -1 ){
-                                arr.push(oFilter2)
-                            }
-                            if(arrayCheck.indexOf("MECH") === -1 ){
-                                arr.push(oFilter3)
-                            }
-                            this.getView().byId("dTable").getBinding("items").filter(
-                                new sap.ui.model.Filter({
-                                filters: arr,
-                                and:true
-                            }));
-                        }
-                    }
-                    for (let i = 0; i < arrayCheck.length; i++){
-                        
-                        if(arrayCheck.indexOf("OTHER") === -1 )
-                        {
-                            let oFilter1 = new sap.ui.model.Filter({
-                                path: 'Branch',
-                                operator: "EQ",
-                                value1: label[i].getLabel()
-                            });
-                            this.getView().byId("dTable").getBinding("items").filter(oFilter1)
-                        }
-                    }
-                }
-
-            },
-
-            onSelectionChanged2:function(oEvent){
+            onSelectionChanged1: function (oEvent) {
 
                 let selectedSegment = oEvent.getParameter("segment").getLabel();    // Fetching currently selected lable from donut chart
                 let label = oEvent.oSource.getSelectedSegments();                   // Fetching the selected segments from donut chart
@@ -327,9 +272,9 @@ sap.ui.define([
                 let arrayCheck = [];                                                // For storing the all he selected branchs 
                 let arr = [];                                                       // For storing the filters 
                 // setting others as selected
-                if (selectedSegment == "OTHER"){
-                    let aList = this.getView().byId("DonutChart12").getSegments()
-                    if (oList.length != 0){
+                if (selectedSegment == "OTHER") {
+                    let aList = this.getView().byId("DonutChart1").getSegments()
+                    if (oList.length != 0) {
                         aList[2].setSelected(true)
                     }
                     this.onOpenPopover(oEvent)
@@ -339,73 +284,62 @@ sap.ui.define([
                     arrayCheck.push(label[i].getLabel())
                 }
                 // Fetching the Selected items from Pop Over list
-                if(arrayCheck.indexOf("OTHER" != -1 )){
+                if (arrayCheck.indexOf("OTHER" != -1)) {
                     for (let i = 0; i < oList.length; i++) {
                         arrayCheck.push(oList[i].getTitle())
                     }
                 }
                 // creating the filters
-                for (let i = 0; i < arrayCheck.length; i++){  
+                for (let i = 0; i < arrayCheck.length; i++) {
                     let oFilter1 = new sap.ui.model.Filter({ path: 'Branch', operator: "EQ", value1: arrayCheck[i] });
                     arr.push(oFilter1);
                 }
                 // Setting all the filters to the table
                 this.getView().byId("dTable").getBinding("items").filter(arr);
             },
-            closePop:function(){
+            closePop: function () {
                 this.getView().byId("myPopover").setVisible(false)
             },
             onOpenPopover: function (oEvent) {
                 debugger;
+                this.getView().getModel("oModelNew").setProperty("/Others", []);
                 let oPopover = this.getView().byId("myPopover")
                 oPopover.setVisible(true)
                 let oButton = oEvent.getSource();
                 oPopover.openBy(oButton);
-                let oArray = []
-                let arr = []
-                
-                let oBinding = this.getView().getModel("oModel").getProperty("/result")
-                for (let i =0 ; i<oBinding.length ; i++){
-                    let oTemp = oBinding[i].Branch
-                    oTemp = oTemp.toLowerCase()
-                    if(oTemp != "cse" && oTemp != "ece"){
-                        oTemp = oTemp.toUpperCase()
-                        arr.push(oTemp)
-                    }
-                }
-
-                let count= {}
-
-                arr.forEach(element => {
-                    count[element] = (count[element] || 0) + 1;
-                });
-
+                var arr = []
+                var res = this.getView().getModel("oModelNew").getProperty("/Others");
+                var arr = this.getView().getModel("oModelNew").getProperty("/ans1");
+                var cont = this.getView().getModel("oModelNew").getProperty("/val1");
                 arr = [...new Set(arr)];
-                for (let i =0 ; i<arr.length ; i++){
-                    let oTempObject = {
-                        Branch : arr[i],
-                        Count : count[arr[i]]
+                for (var j = 0, k = 0; j < arr.length && k < cont.length; k++, j++) {
+                    var obj = {
+                        'Branch': arr[j].toUpperCase(),
+                        'Count': cont[k]
                     }
-                    oArray.push(oTempObject)
+                    res.push(obj)
                 }
-                this.getView().getModel("oModel").setProperty("/input",oArray)
+                this.getView().getModel("oModelNew").setProperty("/Others", res);
             },
-            handleSelectionChange:function(){
+
+            handleSelectionChange: function () {
 
                 let oList = this.getView().byId("_IDGenList1").getSelectedItems()
-
-                let label = this.getView().byId("DonutChart12").getSelectedSegments()
+                let label = this.getView().byId("DonutChart1").getSelectedSegments()
                 let oArray = []
 
-                // let arrayCheck = []
                 for (let i = 0; i < label.length; i++) {
-                    // arrayCheck.push(label[i].getLabel())
-                    oArray.push(new sap.ui.model.Filter({path: 'Branch',operator: "EQ", value1: label[i].getLabel()}))
+                    oArray.push(new sap.ui.model.Filter({ path: 'Branch', operator: "EQ", value1: label[i].getLabel() }))
                 }
 
-                for(let i = 0; i<oList.length;i++){
-                    let title  = oList[i].getTitle()
-                    oArray.push(new sap.ui.model.Filter({path: 'Branch',operator: "EQ", value1: title}))
+                for (let i = 0; i < oList.length; i++) {
+                    let title = oList[i].getTitle()
+                    oArray.push(new sap.ui.model.Filter({ path: 'Branch', operator: "EQ", value1: title }))
+                }
+
+                if (oList.length == 0) {
+                    let aList = this.getView().byId("DonutChart1").getSegments()
+                    aList[2].setSelected(false)
                 }
 
                 this.getView().byId("dTable").getBinding("items").filter(oArray)
@@ -413,10 +347,26 @@ sap.ui.define([
             cFilter: function () {
                 this.byId("_IDGenDialog1").open()
             },
-            handleSearch: function () {
+            handleSearch1: function () {
                 debugger;
                 let filter = [];
                 let query = this.getView().byId("_IDGenInput1").getValue()
+                if (query && query.length > 0) {
+                    filter.push(new Filter({
+                        path: "StudentId",
+                        operator: FilterOperator.Contains,
+                        value1: query,
+                    }));
+                }
+                // bind filter with list
+                // let getList = this.getView().byId("dTable");
+                // let bindingItems = getList.getBinding("items");
+                // bindingItems.filter(filter);
+            },
+            handleSearch2: function () {
+                debugger;
+                let filter = [];
+                let query = this.getView().byId("_IDGenInput2").getValue()
                 if (query && query.length > 0) {
                     filter.push(new Filter({
                         path: "StudentName",
@@ -425,18 +375,43 @@ sap.ui.define([
                     }));
                 }
                 // bind filter with list
-                let getList = this.getView().byId("dTable");
-                let bindingItems = getList.getBinding("items");
-                bindingItems.filter(filter);
+                // let getList = this.getView().byId("dTable");
+                // let bindingItems = getList.getBinding("items");
+                // bindingItems.filter(filter);
             },
-            helpReq: function () {
+            handleSearch3: function () {
                 debugger;
-                searchHelp.helpRequest(this)
+                let filter = [];
+                let query = this.getView().byId("_IDGenInput3").getValue()
+                if (query && query.length > 0) {
+                    filter.push(new Filter({
+                        path: "Branch",
+                        operator: FilterOperator.Contains,
+                        value1: query,
+                    }));
+                }
+                // bind filter with list
+                // let getList = this.getView().byId("dTable");
+                // let bindingItems = getList.getBinding("items");
+                // bindingItems.filter(filter);
             },
-            onSelect: function(){
+            helpReq1: function () {
+                debugger;
+                searchHelp.helpRequest1(this)
+            },
+            helpReq2: function () {
+                debugger;
+                searchHelp.helpRequest2(this)
+            },
+            helpReq3: function () {
+                debugger;
+                searchHelp.helpRequest3(this)
+            },
+            onSelect: function () {
                 this.getView().byId("_IDGenButton4").setVisible(true)
                 this.getView().byId("_IDGenButton5").setVisible(true)
             },
+
             createColumnConfig: function () {
                 let aCol = [];
                 aCol.push({
@@ -502,8 +477,99 @@ sap.ui.define([
                 this.fixedDialog.attachBeforeClose(this.setDataFromExcel, this);
             },
 
+            donutChartCount: function () {
+                debugger;
+                var arr = this.getView().getModel('oModel').getProperty("/result");
+                const counter = {};
+                var brr = [];
+                arr.forEach(i => {
+                    brr.push(i.Branch)
+                });
+                brr.forEach(ele => {
+                    if (counter[ele]) {
+                        counter[ele] += 1;
+                    } else {
+                        counter[ele] = 1;
+                    }
+                });
+                const keyValueArray = Object.entries(counter);
+                keyValueArray.sort((a, b) => b[1] - a[1]);
+                const sortedObject = Object.fromEntries(keyValueArray);
+                console.log(sortedObject);
+                var objNames = [];
+                var objValues = [];
+                for (var i in sortedObject) {
+                    objNames.push(i);
+                    objValues.push(sortedObject[i])
+                }
+                var name = this.getView().getModel('oModelNew').getProperty("/obj1");
+                var valu = this.getView().getModel("oModelNew").getProperty("/obj2");
+                this.getView().getModel('oModelNew').setProperty("/obj1/branchA", objNames[0]);
+                this.getView().getModel('oModelNew').setProperty("/obj1/branchB", objNames[1]);
+                this.getView().getModel("oModelNew").setProperty("/obj2/countA", objValues[0]);
+                this.getView().getModel("oModelNew").setProperty("/obj2/countB", objValues[1]);
+                var objNameslen = objNames.slice(2,);
+                var objValuelen = objValues.slice(2,);
+                this.getView().getModel('oModelNew').setProperty("/ans1", objNameslen);
+                this.getView().getModel('oModelNew').setProperty("/val1", objValuelen);
+                objValuelen = objValuelen.length;
+                this.getView().getModel("oModelNew").setProperty("/count/res", objValuelen);
+            },
+
+            onSelectionChange: function (oEvent) {
+                debugger;
+
+                let sKey = this.getView().byId("SB1").getSelectedKey();
+                if (sKey == "Filter") {
+                    this.getView().byId("_IDGenFlexBox2").setVisible(false)
+                    this.getView().byId("_IDGenFlexBox4").setVisible(true)
+                }
+                else {
+                    this.getView().byId("_IDGenFlexBox2").setVisible(true)
+                    this.getView().byId("_IDGenFlexBox4").setVisible(false)
+                }
+
+            },
+            onSearch: function () {
+                let nId = this.getView().byId("_IDGenInput1").getValue();
+                let sName = this.getView().byId("_IDGenInput2").getValue();
+                let sBranch = this.getView().byId("_IDGenInput3").getValue();
+
+                let aArray2 = []
+
+                if (nId != '') {
+
+                    let oFilter1 = new sap.ui.model.Filter({
+                        path: 'StudentId',
+                        operator: "EQ",
+                        value1: nId
+                    });
+                    aArray2.push(oFilter1)
+                }
+                if (sName != '') {
+
+                    let oFilter1 = new sap.ui.model.Filter({
+                        path: 'StudentName',
+                        operator: FilterOperator.Contains,
+                        value1: sName
+                    });
+                    aArray2.push(oFilter1)
+                }
+                if (sBranch != '') {
+
+                    let oFilter1 = new sap.ui.model.Filter({
+                        path: 'Branch',
+                        operator: FilterOperator.Contains,
+                        value1: sBranch
+                    });
+                    aArray2.push(oFilter1)
+                }
+
+                this.getView().byId("dTable").getBinding("items").filter(aArray2);
 
 
+
+            }
 
 
 
