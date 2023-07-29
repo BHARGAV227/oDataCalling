@@ -12,6 +12,15 @@
   <Label id="_IDGenLabel32" text="BRANCH" width="10%"></Label>
   <Input id="sBranchReg" width="90%" type="Text" value="{oModel>/create/Branch}"  />
 
+  <Label id="_IDGenLabel42" text="COLLEGE" width="10%"></Label>
+  <Input id="sCollegeReg" width="90%" type="Text" value="{oModel>/create/College}"  />
+
+  <Label id="_IDGenLabel52" text="STATUS" width="10%"></Label>
+	<Select id="_IDGenSelect1" >
+		<core:Item id="_IDGenItem2" key="AFFILIATED" text="Affiliated" />
+		<core:Item id="_IDGenItem1" key="AUTONOMOUS" text="Autonomous" />
+	</Select>
+
   <Button id="_IDGenButton12" text="Cancel" press="onCancel" />
 
   <Button id="_IDGenButton22" text="Save" type="Emphasized" press="getCreate" />

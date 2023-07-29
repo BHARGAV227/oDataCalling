@@ -163,7 +163,7 @@ sap.ui.define([
                 this.setInVissible()
                 const oModel2 = new JSONModel();
                 this.newDialog2.setModel(oModel2, "oModel");
-                let a = { StudentId: '', StudentName: '', Branch: '' }
+                let a = { StudentId: '', StudentName: '', Branch: '', College:'', Status:'' }
                 this.newDialog2.getModel("oModel").setProperty("/create", a)
                 this.newDialog2.open();
             },
@@ -173,6 +173,7 @@ sap.ui.define([
                 const oDataModel = new ODataModel(sUrl, true);
                 const that = this; // Store the reference to the outer context
                 let oObject = this.newDialog2.getModel("oModel").getProperty("/create")
+                oObject.Status= sap.ui.getCore().byId("_IDGenSelect1").getSelectedKey()
                 oObject.StudentId = parseInt(oObject.StudentId)
                 this.newDialog2.close();    //To close the Dialog box 
                 //oData call to create the new record
@@ -297,6 +298,40 @@ sap.ui.define([
                 // Setting all the filters to the table
                 this.getView().byId("dTable").getBinding("items").filter(arr);
             },
+            onSelectionChanged2: function(oEvent){
+
+                let selectedSegment = oEvent.getParameter("segment").getLabel();    // Fetching currently selected lable from donut chart
+                let label = oEvent.oSource.getSelectedSegments();                   // Fetching the selected segments from donut chart
+                // let oList = this.getView().byId("_IDGenList1").getSelectedItems()   // Fetching the selected items from the List
+                let arrayCheck = [];                                                // For storing the all he selected branchs 
+                let arr = [];                                                       // For storing the filters 
+                // setting others as selected
+                if (selectedSegment == "OTHER") {
+                    let aList = this.getView().byId("DonutChart1").getSegments()    
+                    if (oList.length != 0) {
+                        aList[2].setSelected(true)
+                    }
+                    this.onOpenPopover(oEvent)
+                }
+                // Fetching the Selected Segments from Donut Chart
+                for (let i = 0; i < label.length; i++) {
+                    arrayCheck.push(label[i].getLabel())
+                }
+                // Fetching the Selected items from Pop Over list
+                if (arrayCheck.indexOf("OTHER" != -1)) {
+                    for (let i = 0; i < oList.length; i++) {
+                        arrayCheck.push(oList[i].getTitle())
+                    }
+                }
+                // creating the filters
+                for (let i = 0; i < arrayCheck.length; i++) {
+                    let oFilter1 = new sap.ui.model.Filter({ path: 'College', operator: "EQ", value1: arrayCheck[i] });
+                    arr.push(oFilter1);
+                }
+                // Setting all the filters to the table
+                this.getView().byId("dTable").getBinding("items").filter(arr);
+
+            },
             closePop: function () {
                 this.getView().byId("myPopover").setVisible(false)
             },
@@ -358,10 +393,6 @@ sap.ui.define([
                         value1: query,
                     }));
                 }
-                // bind filter with list
-                // let getList = this.getView().byId("dTable");
-                // let bindingItems = getList.getBinding("items");
-                // bindingItems.filter(filter);
             },
             handleSearch2: function () {
                 debugger;

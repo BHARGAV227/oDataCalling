@@ -28,7 +28,7 @@
                 </suite:segments>
               </suite:InteractiveDonutChart>
 
-              <suite:InteractiveDonutChart id="DonutChart2" displayedSegments="3" selectionChanged="onSelectionChanged1" class="sapUiMediumMarginBeginEnd" >
+              <suite:InteractiveDonutChart id="DonutChart2" displayedSegments="3"  selectionChanged="onSelectionChanged2" class="sapUiMediumMarginBeginEnd" >
                 <suite:segments>
                   <suite:InteractiveDonutChartSegment  id="_IDGenInteractiveDonutChartSegment5" label="{oModelNew>/obj1/branchA}" value="{oModelNew>/obj2/countA}" />
                   <suite:InteractiveDonutChartSegment id="_IDGenInteractiveDonutChartSegment6" label="{oModelNew>/obj1/branchB}" value="{oModelNew>/obj2/countB}" />
@@ -81,7 +81,6 @@
               <Button id="getFilter" width="150px" type="Transparent" text="Branch Filter" press="setVissible2" class="sapUiMediumMarginBeginEnd"></Button>
             </FlexBox>
 
-
             <Input id="idInput2" visible="false" placeholder="Branch" width="10%"></Input>
             <Button id="go2" visible="false" text="Go" press="getFilter"></Button>
 
@@ -90,8 +89,6 @@
 
           </f:DynamicPageHeader>
 			  </f:header>
-      
-      
 
       <f:content>         
         <!-- <Table id="dTable" visible="false" items="{oModel>/result}" mode="SingleSelectMaster" growing="true" growingThreshold="5" selectionChange="handleSelectionChange" inset="false"> -->
@@ -115,6 +112,12 @@
             <Column id="c-2" visible="{oModel>/cFilter/sBranch}">
               <Text id="sBranch" text="Branch" />
             </Column>
+            <Column id="c-3" visible="{oModel>/cFilter/sBranch}">
+              <Text id="sCollege" text="College" />
+            </Column>
+            <Column id="c-4" visible="{oModel>/cFilter/sBranch}">
+              <Text id="sStatus" text="Branch" />
+            </Column>
           </columns>
           <items>
             <ColumnListItem id="as-1" type="Navigation">
@@ -122,6 +125,8 @@
                 <Text id="studentId" text="{oModel>StudentId}"></Text>
                 <Text id="studentName" text="{oModel>StudentName}"></Text>
                 <Text id="studentBranch" text="{oModel>Branch}"></Text>
+                <Text id="College" text="{oModel>College}"></Text>
+                <Text id="Status" text="{oModel>Status}"></Text>
               </cells>
             </ColumnListItem>
           </items>
@@ -141,9 +146,7 @@
 				</OverflowToolbar>
 			</f:footer>
 
-
       </f:DynamicPage>
-
 
   <!-- <Page id="page" title="{i18n>title}"> -->
 
@@ -176,5 +179,4 @@
 	</Popover>
 
 
-  <!-- </Page> -->
 </mvc:View>
