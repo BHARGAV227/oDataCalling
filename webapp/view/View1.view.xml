@@ -159,7 +159,7 @@
 			<StandardListItem id="_IDGenStandardListItem3" selected="{oModel>/cFilter/sBranch}" title="Student Branch"/>
 		</List>
     <FlexBox id="_IDGenFlexBox3" justifyContent="Center" >
-      <Button id="_IDGenButton1" text="Close" press="onCancel" type="Emphasized"></Button>
+      <Button id="_IDGenButton1" text="Close"  press="onCancel" type="Accept"></Button>
     </FlexBox>
   
   </Dialog>
